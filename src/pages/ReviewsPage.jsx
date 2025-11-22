@@ -6,7 +6,7 @@ export default function ReviewsPage() {
     const [reviews, setReviews] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    const BASE_URL = 'http://localhost:5000'
+    // const BASE_URL = 'http://localhost:5000'
 
     const loadReviews = async () => {
         setLoading(true);
@@ -49,7 +49,7 @@ export default function ReviewsPage() {
             width: 120,
             render: (_, record) => (
                 <Image
-                    src={`${BASE_URL}${record.product?.images?.[0]}`}
+                    src={`${import.meta.env.VITE_IMAGE_API}${record.product?.images?.[0]}`}
                     alt="product"
                     width={60}
                 />

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Table, Button, Modal, Form, Input, InputNumber, Select, message, Upload } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import * as productService from '../services/productService';
+import * as categoryService from '../services/categoryService'
 import axios from 'axios';
 
 const { Option } = Select;
@@ -30,10 +31,8 @@ export default function ProductsPage() {
   // Load categories for Select dropdown
   const loadCategories = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const res = await axios.get('http://localhost:5000/api/categories', {
-        headers: token ? { Authorization: `Bearer ${token}` } : {}
-      });
+      // const token = localStorage.getItem('token');
+      const res = await categoryService.getCategories()
       setCategories(res.data.categories || res.data);
     } catch (err) {
       message.error('Failed to load categories');
@@ -155,7 +154,7 @@ export default function ProductsPage() {
           {imgs?.slice(0, 1).map((url, i) => (
             <img
               key={i}
-              src={`http://localhost:5000${url}`}
+              src={`${import.meta.env.VITE_IMAGE_API}${url}`}
               alt="thumb"
               style={{ width: 50, height: 50, objectFit: "cover", borderRadius: 4 }}
             />
@@ -172,7 +171,7 @@ export default function ProductsPage() {
       render: (url) =>
         url ? (
           <img
-            src={`http://localhost:5000${url}`}
+            src={`${import.meta.env.VITE_IMAGE_API}${url}`}
             alt="hover"
             style={{ width: 50, height: 50, objectFit: "cover", borderRadius: 4 }}
           />
