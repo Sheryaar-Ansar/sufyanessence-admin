@@ -38,7 +38,7 @@ export default function TotalReviewsPage() {
             width: 100,
             render: (_, record) => (
                 <Image
-                    src={`${import.meta.env.VITE_IMAGE_URI}${record.product?.images?.[0]}`}
+                    src={`${import.meta.env.VITE_IMAGE_API}${record.product?.images?.[0]}`}
                     width={60}
                 />
             )
@@ -77,7 +77,7 @@ export default function TotalReviewsPage() {
             render: (_, record) => (
                 <>
                     {record.images?.map((img, i) => (
-                        <Image key={i} src={`${import.meta.env.VITE_IMAGE_URI}${img}`} width={70} className="mr-2" />
+                        <Image key={i} src={`${import.meta.env.API}${img}`} width={70} className="mr-2" />
                     ))}
                 </>
             )
