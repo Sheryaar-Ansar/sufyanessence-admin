@@ -6,7 +6,6 @@ import Dashboard from './pages/Dashboard';
 import ProductsPage from './pages/ProductsPage';
 import CategoriesPage from './pages/CategoriesPage';
 import ReviewsPage from './pages/ReviewsPage';
-import OrdersPage from './pages/PendingOrdersPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import { AuthProvider } from './hooks/useAuth';
 import TotalReviewsPage from './pages/TotalReviews';
