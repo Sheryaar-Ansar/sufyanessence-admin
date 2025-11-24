@@ -11,7 +11,7 @@ import { AuthProvider } from './hooks/useAuth';
 import TotalReviewsPage from './pages/TotalReviews';
 import PendingOrdersPage from './pages/PendingOrdersPage';
 import CancelledOrdersPage from './pages/CancelledOrdersPage';
-import DeliveredOrdersPage from './pages/deliveredOrdersPage';
+import DeliveredOrdersPage from './pages/DeliveredOrdersPage';
 import ShippingOrdersPage from './pages/ShippingOrdersPage';
 import ProcessingOrdersPage from './pages/ProcessingOrdersPage';
 
