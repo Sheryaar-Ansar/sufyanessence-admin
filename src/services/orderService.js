@@ -7,7 +7,7 @@ const getAuthHeader = () => {
   return token ? { Authorization: `Bearer ${token}` } : {};
 };
 
-export const getOrders = () => api.get('/orders', { headers: getAuthHeader() });
+export const getOrders = (status) => api.get(`/orders?status=${status}`, { headers: getAuthHeader() });
 export const getOrder = (id) => api.get(`/orders/${id}`, { headers: getAuthHeader() });
 export const updateOrderStatus = (id, payload) => api.put(`/orders/${id}/status`, payload, { headers: getAuthHeader() });
 

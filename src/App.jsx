@@ -6,9 +6,15 @@ import Dashboard from './pages/Dashboard';
 import ProductsPage from './pages/ProductsPage';
 import CategoriesPage from './pages/CategoriesPage';
 import ReviewsPage from './pages/ReviewsPage';
-import OrdersPage from './pages/OrdersPage';
+import OrdersPage from './pages/PendingOrdersPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import { AuthProvider } from './hooks/useAuth';
+import TotalReviewsPage from './pages/TotalReviews';
+import PendingOrdersPage from './pages/PendingOrdersPage';
+import CancelledOrdersPage from './pages/CancelledOrdersPage';
+import DeliveredOrdersPage from './pages/deliveredOrdersPage';
+import ShippingOrdersPage from './pages/ShippingOrdersPage';
+import ProcessingOrdersPage from './pages/ProcessingOrdersPage';
 
 function App() {
   return (
@@ -28,8 +34,13 @@ function App() {
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="products" element={<ProductsPage />} />
             <Route path="categories" element={<CategoriesPage />} />
-            <Route path="reviews" element={<ReviewsPage />} />
-            <Route path="orders" element={<OrdersPage />} />
+            <Route path="reviews/total" element={<TotalReviewsPage />} />
+            <Route path="reviews/pending" element={<ReviewsPage />} />
+            <Route path="orders/pending" element={<PendingOrdersPage />} />
+            <Route path="orders/processing" element={<ProcessingOrdersPage />} />
+            <Route path="orders/shipped" element={<ShippingOrdersPage />} />
+            <Route path="orders/delivered" element={<DeliveredOrdersPage />} />
+            <Route path="orders/cancelled" element={<CancelledOrdersPage />} />
           </Route>
 
           {/* Redirect unknown routes */}

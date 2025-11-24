@@ -11,3 +11,6 @@ export const getPendingReviews = () => api.get('/reviews/pending', { headers: ge
 export const approveReview = (id) => api.put(`/reviews/${id}/approve`, {}, { headers: getAuthHeader() });
 
 export const rejectReview = (id) => api.delete(`/reviews/${id}`, { headers: getAuthHeader() });
+
+export const getAllAcceptedReviews = () => api.get('/reviews', { headers: getAuthHeader() })
+export const deleteReview = (id) => api.delete(`/reviews/${id}`, { headers: getAuthHeader() })

@@ -6,8 +6,6 @@ export default function ReviewsPage() {
     const [reviews, setReviews] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    // const BASE_URL = 'http://localhost:5000'
-
     const loadReviews = async () => {
         setLoading(true);
         try {

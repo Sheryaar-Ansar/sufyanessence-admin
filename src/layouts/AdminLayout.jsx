@@ -18,12 +18,71 @@ export default function AdminLayout() {
 
   // Define menu items using the new 'items' prop
   const menuItems = [
-    { key: '1', icon: <AppstoreOutlined />, label: <Link to="/admin">Dashboard</Link> },
-    { key: '2', icon: <ShoppingOutlined />, label: <Link to="/admin/products">Products</Link> },
-    { key: '3', icon: <TagsOutlined />, label: <Link to="/admin/categories">Categories</Link> },
-    { key: '4', icon: <StarOutlined />, label: <Link to="/admin/reviews">Reviews</Link> },
-    { key: '5', icon: <OrderedListOutlined />, label: <Link to="/admin/orders">Orders</Link> },
+    {
+      key: '1',
+      icon: <AppstoreOutlined />,
+      label: <Link to="/admin">Dashboard</Link>
+    },
+
+    {
+      key: '2',
+      icon: <ShoppingOutlined />,
+      label: <Link to="/admin/products">Products</Link>
+    },
+
+    {
+      key: '3',
+      icon: <TagsOutlined />,
+      label: <Link to="/admin/categories">Categories</Link>
+    },
+
+    // ---- REVIEWS WITH SUBMENU ----
+    {
+      key: 'reviews',
+      icon: <StarOutlined />,
+      label: 'Reviews',
+      children: [
+        {
+          key: 'total-reviews',
+          label: <Link to="/admin/reviews/total">Total Reviews</Link>
+        },
+        {
+          key: 'pending-reviews',
+          label: <Link to="/admin/reviews/pending">Pending Reviews</Link>
+        }
+      ]
+    },
+
+    // ---- ORDERS WITH SUBMENU ----
+    {
+      key: 'orders',
+      icon: <OrderedListOutlined />,
+      label: 'Orders',
+      children: [
+        {
+          key: 'pending-orders',
+          label: <Link to="/admin/orders/pending">Pending Orders</Link>
+        },
+        {
+          key: 'processing-orders',
+          label: <Link to="/admin/orders/processing">Processing Orders</Link>
+        },
+        {
+          key: 'shipped-orders',
+          label: <Link to="/admin/orders/shipped">Shipped Orders</Link>
+        },
+        {
+          key: 'delivered-orders',
+          label: <Link to="/admin/orders/delivered">Delivered Orders</Link>
+        },
+        {
+          key: 'cancelled-orders',
+          label: <Link to="/admin/orders/cancelled">Cancelled Orders</Link>
+        }
+      ]
+    },
   ];
+
 
   return (
     <Layout className="min-h-screen">

@@ -4,7 +4,7 @@ import * as dashboardService from '../services/dashboardService'
 const { Title } = Typography;
 
 const Dashboard = () => {
-  const [stats, setStats] = useState({ products: 0, orders: 0, pendingReviews: 0 });
+  const [stats, setStats] = useState({ products: 0, orders: 0, reviews: 0, pendingReviews: 0, pendingOrders: 0, processingOrders: 0, completedOrders: 0 });
 
   const loadStats = async() =>{
     try {
@@ -43,8 +43,24 @@ const Dashboard = () => {
         </div>
 
         <div className="p-4 rounded shadow bg-white">
-          <h3 className="text-sm text-gray-500">Pending Reviews</h3>
+          <h3 className="text-sm text-gray-500">Reviews</h3>
           <div className="text-2xl font-bold">{stats.reviews}</div>
+        </div>
+        <div className="p-4 rounded shadow bg-white">
+          <h3 className="text-sm text-gray-500">Pending Orders</h3>
+          <div className="text-2xl font-bold">{stats.pendingOrders}</div>
+        </div>
+        <div className="p-4 rounded shadow bg-white">
+          <h3 className="text-sm text-gray-500">Pending Reviews</h3>
+          <div className="text-2xl font-bold">{stats.pendingReviews}</div>
+        </div>
+        <div className="p-4 rounded shadow bg-white">
+          <h3 className="text-sm text-gray-500">Processing Orders</h3>
+          <div className="text-2xl font-bold">{stats.processingOrders}</div>
+        </div>
+        <div className="p-4 rounded shadow bg-white">
+          <h3 className="text-sm text-gray-500">Completed Orders</h3>
+          <div className="text-2xl font-bold">{stats.completedOrders}</div>
         </div>
       </div>
     </div>
