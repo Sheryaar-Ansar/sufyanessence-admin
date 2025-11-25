@@ -47,7 +47,7 @@ export default function ReviewsPage() {
             width: 120,
             render: (_, record) => (
                 <Image
-                    src={`${import.meta.env.VITE_IMAGE_API}${record.product?.images?.[0]}`}
+                    src={record.product?.images?.[0]}
                     alt="product"
                     width={60}
                 />
@@ -94,7 +94,7 @@ export default function ReviewsPage() {
             render: (_, record) => (
                 <>
                     {record.images?.map((img, i) => (
-                        <Image key={i} src={`${import.meta.env.VITE_IMAGE_API}${img}`} width={70} className="mr-2" />
+                        <Image key={i} src={img} width={70} className="mr-2" />
                     ))}
                 </>
             )
