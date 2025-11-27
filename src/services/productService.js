@@ -9,7 +9,7 @@ const getAuthHeader = () => {
 };
 
 // Products CRUD
-export const getProducts = () => api.get('/products', { headers: getAuthHeader() });
+export const getProducts = (params={}) => api.get('/products', {params}, { headers: getAuthHeader() });
 export const getProduct = (id) => api.get(`/products/${id}`, { headers: getAuthHeader() });
 export const createProduct = (payload) => api.post('/products', payload, { headers: getAuthHeader() });
 export const updateProduct = (id, payload) => api.put(`/products/${id}`, payload, { headers: getAuthHeader() });

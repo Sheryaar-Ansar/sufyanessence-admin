@@ -10,50 +10,51 @@ export default function ProductsPage() {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  // ⭐ Pagination state
+  const [page, setPage] = useState(1);
+  const [limit] = useState(10);
+  const [total, setTotal] = useState(0);
+
   const [modalVisible, setModalVisible] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
   const [form] = Form.useForm();
 
-  // ⭐ Fix: Cloudinary + old images support
+  // ⭐ Fix: Cloudinary or local image resolver
   const getImageUrl = (url) => {
     if (!url) return "/placeholder.jpg";
-
-    // Cloudinary URL
-    if (url.startsWith("http")) {
-      return url;
-    }
-
-    // Old local image path (Render)
+    if (url.startsWith("http")) return url;
     return `${import.meta.env.VITE_IMAGE_API}/${url}`;
   };
 
-  // Load products from backend
+  // ⭐ Load products with pagination
   const loadProducts = async () => {
     setLoading(true);
     try {
-      const res = await productService.getProducts();
-      setProducts(res.data.products || res.data);
-      console.log(res)
+      const res = await productService.getProducts({ page, limit });
+
+      setProducts(res.data.products);
+      setTotal(res.data.TotalProducts);
     } catch (err) {
-      message.error('Failed to load products');
+      message.error("Failed to load products");
     }
     setLoading(false);
   };
 
-  // Load categories for Select dropdown
+  // Load categories for dropdown
   const loadCategories = async () => {
     try {
       const res = await categoryService.getCategories();
       setCategories(res.data.categories || res.data);
     } catch (err) {
-      message.error('Failed to load categories');
+      message.error("Failed to load categories");
     }
   };
 
   useEffect(() => {
     loadProducts();
     loadCategories();
-  }, []);
+  }, [page]); // ⭐ refetch when page changes
 
   const openModal = (product = null) => {
     setEditingProduct(product);
@@ -69,15 +70,12 @@ export default function ProductsPage() {
         stock: product.stock ?? 0,
         subcategory: product.subcategory,
         category: product.category,
-
-        // ⭐ Cloudinary or old path: Upload auto handles it
         images: product.images?.map((url, index) => ({
           uid: String(index + 1),
           name: `image-${index + 1}.jpg`,
           status: "done",
           url: getImageUrl(url)
         })) || [],
-
         hover: product.hover
           ? [{
               uid: "-1",
@@ -103,10 +101,10 @@ export default function ProductsPage() {
   const handleDelete = async (id) => {
     try {
       await productService.deleteProduct(id);
-      message.success('Product deleted');
+      message.success("Product deleted");
       loadProducts();
     } catch (err) {
-      message.error('Delete failed');
+      message.error("Delete failed");
     }
   };
 
@@ -114,19 +112,16 @@ export default function ProductsPage() {
     try {
       const payload = { ...values };
 
-      // --- MULTIPLE IMAGES ---
+      // MULTIPLE IMAGES
       if (values.images?.length) {
-        const files = values.images
-          .filter(f => f.originFileObj)
-          .map(f => f.originFileObj);
-
+        const files = values.images.filter(f => f.originFileObj).map(f => f.originFileObj);
         if (files.length > 0) {
           const res = await productService.uploadImages(files);
           payload.images = res.data.urls;
         }
       }
 
-      // --- HOVER IMAGE ---
+      // HOVER IMAGE
       if (values.hover?.length && values.hover[0].originFileObj) {
         const file = values.hover[0].originFileObj;
         const res = await productService.uploadHover(file);
@@ -147,7 +142,6 @@ export default function ProductsPage() {
 
       loadProducts();
       closeModal();
-
     } catch (err) {
       console.error(err);
       message.error("Save failed");
@@ -185,30 +179,24 @@ export default function ProductsPage() {
             alt="hover"
             style={{ width: 50, height: 50, objectFit: "cover", borderRadius: 4 }}
           />
-        ) : (
-          "—"
-        )
+        ) : "—"
     },
 
-    { title: 'Name', dataIndex: 'title', key: 'title' },
-    { title: 'Price', dataIndex: 'price', key: 'price', render: p => `$${p}` },
-    { title: 'Discounted', dataIndex: 'discountedPrice', key: 'discountedPrice', render: p => `$${p || 0}` },
-    { title: 'Stock', dataIndex: 'stock', key: 'stock', render: s => s ?? 0 },
-    { title: 'Category', key: 'category', render: (_, record) => record.subcategory || "—" },
-    { title: 'Format', dataIndex: 'format', key: 'format' },
+    { title: "Name", dataIndex: "title", key: "title" },
+    { title: "Price", dataIndex: "price", key: "price" },
+    { title: "Discounted", dataIndex: "discountedPrice", key: "discountedPrice" },
+    { title: "Stock", dataIndex: "stock", key: "stock" },
+    { title: "Category", key: "category", render: (_, r) => r.subcategory || "—" },
+    { title: "Format", dataIndex: "format", key: "format" },
+    { title: "Created At", dataIndex: "createdAt", key: "createdAt", render: d => new Date(d).toLocaleString() },
+
     {
-      title: 'Created At',
-      dataIndex: 'createdAt',
-      key: 'createdAt',
-      render: date => new Date(date).toLocaleString()
-    },
-    {
-      title: 'Actions',
-      key: 'actions',
+      title: "Actions",
+      key: "actions",
       render: (_, record) => (
         <>
-          <Button size="small" onClick={() => openModal(record)} className="mr-2">Edit</Button>
-          <Button size="small" danger onClick={() => handleDelete(record._id)}>Delete</Button>
+          <Button size="small" onClick={() => openModal(record)}>Edit</Button>
+          <Button danger size="small" className="ml-2" onClick={() => handleDelete(record._id)}>Delete</Button>
         </>
       )
     }
@@ -220,17 +208,25 @@ export default function ProductsPage() {
         <Button type="primary" onClick={() => openModal()}>Add Product</Button>
       </div>
 
+      {/* ⭐ Table with backend-powered pagination */}
       <Table
         rowKey="_id"
         columns={columns}
         dataSource={products}
         loading={loading}
-        scroll={{ x: 'max-content' }}
+        pagination={{
+          current: page,
+          pageSize: limit,
+          total: total,
+          onChange: (p) => setPage(p),
+          showSizeChanger: false
+        }}
+        scroll={{ x: "max-content" }}
       />
 
       <Modal
         open={modalVisible}
-        title={editingProduct ? 'Edit Product' : 'Add Product'}
+        title={editingProduct ? "Edit Product" : "Add Product"}
         onCancel={closeModal}
         onOk={() => form.submit()}
         width={700}
@@ -240,16 +236,16 @@ export default function ProductsPage() {
             <Input />
           </Form.Item>
 
-          <Form.Item name="price" label="Price" rules={[{ required: true, type: 'number' }]}>
-            <InputNumber min={0} style={{ width: '100%' }} />
+          <Form.Item name="price" label="Price" rules={[{ required: true }]}>
+            <InputNumber min={0} style={{ width: "100%" }} />
           </Form.Item>
 
           <Form.Item name="discountedPrice" label="Discounted Price">
-            <InputNumber min={0} style={{ width: '100%' }} />
+            <InputNumber min={0} style={{ width: "100%" }} />
           </Form.Item>
 
           <Form.Item name="stock" label="Stock" rules={[{ required: true }]}>
-            <InputNumber style={{ width: '100%' }} min={0} />
+            <InputNumber min={0} style={{ width: "100%" }} />
           </Form.Item>
 
           <Form.Item name="bio" label="Bio">
@@ -261,18 +257,15 @@ export default function ProductsPage() {
           </Form.Item>
 
           <Form.Item name="subcategory" label="Category">
-            <Select placeholder="Select category" onChange={(sub, option) => {
-              form.setFieldsValue({ category: option['data-cat'] });
-            }}>
-              {categories.map(cat =>
-                cat.name.map(sub => (
-                  <Select.Option
-                    key={cat._id + "-" + sub}
-                    value={sub}
-                    data-cat={cat._id}
-                  >
+            <Select
+              placeholder="Select category"
+              onChange={(sub, opt) => form.setFieldsValue({ category: opt["data-cat"] })}
+            >
+              {categories.map((cat) =>
+                cat.name.map((sub) => (
+                  <Option key={cat._id + "-" + sub} value={sub} data-cat={cat._id}>
                     {sub} ({cat.title})
-                  </Select.Option>
+                  </Option>
                 ))
               )}
             </Select>
@@ -283,7 +276,7 @@ export default function ProductsPage() {
           </Form.Item>
 
           <Form.Item name="format" label="Format" rules={[{ required: true }]}>
-            <Select placeholder="Select format">
+            <Select>
               <Option value="50ml">50ml</Option>
               <Option value="100ml">100ml</Option>
               <Option value="10ml">10ml</Option>
@@ -292,7 +285,6 @@ export default function ProductsPage() {
             </Select>
           </Form.Item>
 
-          {/* MULTIPLE PRODUCT IMAGES */}
           <Form.Item
             name="images"
             label="Product Images"
@@ -304,7 +296,6 @@ export default function ProductsPage() {
             </Upload>
           </Form.Item>
 
-          {/* HOVER IMAGE */}
           <Form.Item
             name="hover"
             label="Hover Image"
